@@ -1,12 +1,39 @@
 <?php
 class Http_Exception extends Exception{
-	final const NOT_MODIFIED = 304;
-	final const BAD_REQUEST = 400;
-	final const NOT_FOUND = 404;
-	final const NOT_ALOWED = 405;
-	final const CONFLICT = 409;
-	final const PRECONDITION_FAILED = 412;
-	final const INTERNAL_ERROR = 500;
+	/**
+  * @var int
+  */
+ final const NOT_MODIFIED = 304;
+ 
+	/**
+  * @var int
+  */
+ final const BAD_REQUEST = 400;
+ 
+	/**
+  * @var int
+  */
+ final const NOT_FOUND = 404;
+ 
+	/**
+  * @var int
+  */
+ final const NOT_ALOWED = 405;
+ 
+	/**
+  * @var int
+  */
+ final const CONFLICT = 409;
+ 
+	/**
+  * @var int
+  */
+ final const PRECONDITION_FAILED = 412;
+ 
+	/**
+  * @var int
+  */
+ final const INTERNAL_ERROR = 500;
 }
 
 class Http_Multiple_Error
@@ -39,10 +66,19 @@ class Http_Multiple_Error
 class Http
 {
 	private $_user;
+ 
 	private $_pass;
 
-	final const HTTP  = 'http';
-	final const HTTPS = 'https';
+	/**
+  * @var string
+  */
+ final const HTTP  = 'http';
+ 
+	/**
+  * @var string
+  */
+ final const HTTPS = 'https';
+ 
 	/**
 	 * Factory of the class. Lazy connect
 	 *
@@ -67,13 +103,14 @@ class Http
 	}
 
 	private array $_append = [];
+ 
 	public function add($http)
 	{
 		$this->_append[] = $http;
 		return $this;
 	}
 
-	private false $_silentMode = false;
+	
 	/**
 	 *
 	 * @param bool $mode
@@ -81,7 +118,6 @@ class Http
 	 */
 	public function silentMode($mode=true)
 	{
-		$this->_silentMode = $mode;
 		return $this;
 	}
 
@@ -96,10 +132,25 @@ class Http
 		return $this;
 	}
 
-	final const POST   = 'POST';
-	final const GET    = 'GET';
-	final const DELETE = 'DELETE';
-	final const PUT    = 'PUT';
+	/**
+  * @var string
+  */
+ final const POST   = 'POST';
+ 
+	/**
+  * @var string
+  */
+ final const GET    = 'GET';
+ 
+	/**
+  * @var string
+  */
+ final const DELETE = 'DELETE';
+ 
+	/**
+  * @var string
+  */
+ final const PUT    = 'PUT';
 
 	private array $_requests = [];
 
@@ -201,6 +252,7 @@ class Http
 	}
 
 	private array $_headers = [];
+ 
 	/**
 	 * setHeaders
 	 *
@@ -219,15 +271,26 @@ class Http
 	 * @param unknown_type $url
 	 * @return unknown
 	 */
-	private function _url($url=null)
+	private function _url($url=null): string
 	{
 		// return "{$this->_protocol}://{$this->_host}:{$this->_port}/{$url}";
-		return "{$this->_protocol}://{$this->_host}/{$url}";
+		return sprintf('%s://%s/%s', $this->_protocol, $this->_host, $url);
 	}
 
-	final const HTTP_OK = 200;
-	final const HTTP_CREATED = 201;
-	final const HTTP_ACEPTED = 202;
+	/**
+  * @var int
+  */
+ final const HTTP_OK = 200;
+ 
+	/**
+  * @var int
+  */
+ final const HTTP_CREATED = 201;
+ 
+	/**
+  * @var int
+  */
+ final const HTTP_ACEPTED = 202;
 
 	/**
 	 * Performing the real request
@@ -249,6 +312,7 @@ class Http
 				curl_setopt($s, $key, $val);
 			}
 		}
+  
 		if(!is_null($this->_user)){
 			curl_setopt($s, CURLOPT_USERPWD, $this->_user.':'.$this->_pass);
 		}
@@ -287,17 +351,15 @@ class Http
 			$out = $_out;
 			break;
 		default:
-			if (!$this->_silentMode) {
-				$_dout = json_decode($_out, null, 512, JSON_THROW_ON_ERROR);
-				if($_dout != NULL)
-				{
-					throw new Http_Exception("{$_dout->error->message}", $status);
-				}else{
-					error_log("Unknown http error: $_out, $err ($status)");
-					throw new Http_Exception($err, $status);
-				}
-			}
+      $_dout = json_decode($_out, null, 512, JSON_THROW_ON_ERROR);
+      if($_dout != NULL)
+  				{
+  					throw new Http_Exception(sprintf('%s', $_dout->error->message), $status);
+  				}
+      error_log(sprintf('Unknown http error: %s, %s (%s)', $_out, $err, $status));
+      throw new Http_Exception($err, $status);
 		}
+  
 		return $out;
 	}
 
@@ -305,15 +367,14 @@ class Http
 	{
 		if ($this->_connMultiple) {
 			return $this->_runMultiple();
-		} else {
-			return $this->_run();
 		}
+  return $this->_run();
 	}
 
 	private function _runMultiple()
 	{
 		$out= null;
-		if (count($this->_append) > 0) {
+		if ($this->_append !== []) {
 			$arr = [];
 			foreach ($this->_append as $_append) {
 				$arr = array_merge($arr, $_append->_getRequests());
@@ -322,13 +383,15 @@ class Http
 			$this->_requests = $arr;
 			$out = $this->_run();
 		}
+  
 		return $out;
 	}
 
 	private function _run()
 	{
 		$headers = $this->_headers;
-		$curly = $result = [];
+  $curly = [];
+  $result = [];
 
 		$mh = curl_multi_init();
 		foreach ($this->_requests as $id => $reg) {
@@ -361,6 +424,7 @@ class Http
 				curl_setopt($curly[$id], CURLOPT_URL, $url . '?' . http_build_query($params));
 				break;
 			}
+   
 			curl_setopt($curly[$id], CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($curly[$id], CURLOPT_HTTPHEADER, $headers);
 
@@ -375,17 +439,11 @@ class Http
 
 		foreach($curly as $id => $c) {
 			$status = curl_getinfo($c, CURLINFO_HTTP_CODE);
-			switch ($status) {
-			case self::HTTP_OK:
-			case self::HTTP_CREATED:
-			case self::HTTP_ACEPTED:
-				$result[$id] = curl_multi_getcontent($c);
-				break;
-			default:
-				if (!$this->_silentMode) {
-					$result[$id] = new Http_Multiple_Error($status, $type, $url, $params);
-				}
-			}
+   $result[$id] = match ($status) {
+       self::HTTP_OK, self::HTTP_CREATED, self::HTTP_ACEPTED => curl_multi_getcontent($c),
+       default => new Http_Multiple_Error($status, $type, $url, $params),
+   };
+   
 			curl_multi_remove_handle($mh, $c);
 		}
 

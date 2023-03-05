@@ -25,20 +25,22 @@ function getEventbriteEvents($eb_keywords, $eb_city, $eb_proximity) {
   foreach($xml->event as $event) {  
 
     // add event if it doesn't already exist
-    ($event_query = mysql_query("SELECT * FROM events WHERE id_eventbrite=$event->id")) || die(mysql_error());
-    if(mysql_num_rows($event_query) == 0) {
+    ($event_query = mysql_query(sprintf('SELECT * FROM events WHERE id_eventbrite=%s', $event->id))) || die(mysql_error());
+    if(mysqli_num_rows($event_query) == 0) {
       echo $event_id." ";
 
       // get event url
       foreach($event->organizer as $organizer) {
         $event_organizer_url = $organizer->url;
       }
+      
       // get event address
       foreach($event->venue as $venue) {
         $event_venue_address = $venue->address;
         $event_venue_city = $venue->city;
         $event_venue_postal_code = $venue->postal_code;
       }
+      
       // get event title
       $event_title = str_replace(["\r\n", "\r", "\n"], ' ', $event->title);  
 
@@ -56,14 +58,14 @@ function getEventbriteEvents($eb_keywords, $eb_city, $eb_proximity) {
                                       '".parseInput($event_title)."',
                                       '".strtotime($event->created)."',
                                       '".trim((string) parseInput($event->organizer->name))."',
-                                      '$event_organizer_url',
+                                      '{$event_organizer_url}',
                                       '".strtotime($event->start_date)."',
                                       '".strtotime($event->end_date)."',
-                                      '$event_venue_address, $event_venue_city, $event_venue_postal_code'
+                                      '{$event_venue_address}, {$event_venue_city}, {$event_venue_postal_code}'
                                       )") || die(mysql_error()); 
     }
 
-    $count++;
+    ++$count;
 
   }
   

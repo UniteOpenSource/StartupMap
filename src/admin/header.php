@@ -35,14 +35,14 @@ if ($page != "login" && ($_COOKIE["representmap_user"] != crypt((string) $admin_
 }
 
 // connect to db
-mysql_connect($db_host, $db_user, $db_pass) || die(mysql_error());
+mysqli_connect($db_host, $db_user, $db_pass) || die(mysql_error());
 mysql_select_db($db_name) || die(mysql_error());
 
 // get marker totals
-$total_approved = mysql_num_rows(mysql_query("SELECT id FROM places WHERE approved='1'"));
-$total_rejected = mysql_num_rows(mysql_query("SELECT id FROM places WHERE approved='0'"));
-$total_pending = mysql_num_rows(mysql_query("SELECT id FROM places WHERE approved IS null"));
-$total_all = mysql_num_rows(mysql_query("SELECT id FROM places"));
+$total_approved = mysqli_num_rows(mysql_query("SELECT id FROM places WHERE approved='1'"));
+$total_rejected = mysqli_num_rows(mysql_query("SELECT id FROM places WHERE approved='0'"));
+$total_pending = mysqli_num_rows(mysql_query("SELECT id FROM places WHERE approved IS null"));
+$total_all = mysqli_num_rows(mysql_query("SELECT id FROM places"));
 
 // admin header
 $admin_head = "
@@ -73,24 +73,24 @@ if($page != "login") {
             <li"; if($view == "approved") { $admin_head .= " class='active'"; } $admin_head .= ">
               <a href='index.php?view=approved'>
                 Approved
-                <span class='badge badge-info'>$total_approved</span>
+                <span class='badge badge-info'>{$total_approved}</span>
               </a>
             </li>
             <li"; if($view == "pending") { $admin_head .= " class='active'"; } $admin_head .= ">
               <a href='index.php?view=pending'>
                 Pending
-                <span class='badge badge-info'>$total_pending</span>
+                <span class='badge badge-info'>{$total_pending}</span>
               </a>
             </li>
             <li"; if($view == "rejected") { $admin_head .= " class='active'"; } $admin_head .= ">
               <a href='index.php?view=rejected'>
                 Rejected
-                <span class='badge badge-info'>$total_rejected</span>
+                <span class='badge badge-info'>{$total_rejected}</span>
               </a>
             </li>
           </ul>
           <form class='navbar-search pull-left' action='index.php' method='get'>
-            <input type='text' name='search' class='search-query' placeholder='Search' autocomplete='off' value='$search'>
+            <input type='text' name='search' class='search-query' placeholder='Search' autocomplete='off' value='{$search}'>
           </form>
           <ul class='nav pull-right'>
             <li><a href='login.php?task=logout'>Sign Out</a></li>
@@ -100,6 +100,7 @@ if($page != "login") {
     </div>
   ";
 }
+
 $admin_head .= "
   <div id='content'>
 ";

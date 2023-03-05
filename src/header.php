@@ -2,7 +2,7 @@
 include __DIR__ . "/include/db.php";
 
 // connect to db
-mysql_connect($db_host, $db_user, $db_pass) || die(mysql_error());
+mysqli_connect($db_host, $db_user, $db_pass) || die(mysql_error());
 mysql_select_db($db_name) || die(mysql_error());
 
 // if map is in Startup Genome mode, check for new data

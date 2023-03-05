@@ -11,12 +11,13 @@ $type = mysql_real_escape_string(parseInput($_POST['type']));
 $address = mysql_real_escape_string(parseInput($_POST['address']));
 $uri = mysql_real_escape_string(parseInput($_POST['uri']));
 $description = mysql_real_escape_string(parseInput($_POST['description']));
-
 // validate fields
 if (empty($title) || empty($type) || empty($address) || empty($uri) || empty($description) || empty($owner_name) || empty($owner_email)) {
     echo "All fields are required - please try again.";
     exit;
-} elseif ($sg_enabled) {
+}
+
+if ($sg_enabled) {
     // if startup genome mode enabled, post new data to API
     try {
       @$r = $http->doPost("/organization", $_POST);
@@ -26,15 +27,17 @@ if (empty($title) || empty($type) || empty($address) || empty($uri) || empty($de
         echo "success"; 
         exit;
       }
-    } catch (Exception $e) {
+    } catch (Exception $exception) {
       echo "<pre>";
-      print_r($e);
+      print_r($exception);
     }
+    
     // normal mode enabled, save new data to local db
-} else {
+}
+else {
 
   // insert into db, wait for approval
-  ($insert = mysql_query("INSERT INTO places (approved, title, type, address, uri, description, owner_name, owner_email) VALUES (null, '$title', '$type', '$address', '$uri', '$description', '$owner_name', '$owner_email')")) || die(mysql_error());
+  ($insert = mysql_query(sprintf('INSERT INTO places (approved, title, type, address, uri, description, owner_name, owner_email) VALUES (null, \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\')', $title, $type, $address, $uri, $description, $owner_name, $owner_email))) || die(mysql_error());
 
   // geocode new submission
   $hide_geocode_output = true;

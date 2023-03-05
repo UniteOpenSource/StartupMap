@@ -20,14 +20,14 @@ function geocode($table) {
   global $hide_geocode_output;
 
   // get places that don't have latlong values
-  ($result = mysql_query("SELECT * FROM $table WHERE lat=0 OR lng=0")) || die(mysql_error());
+  ($result = mysql_query(sprintf('SELECT * FROM %s WHERE lat=0 OR lng=0', $table))) || die(mysql_error());
 
   // geocode and save them back to the db
   $delay = 0;
   $base_url = "http://" . MAPS_HOST . "/maps/api/geocode/xml";
 
   // Iterate through the rows, geocoding each address
-  while ($row = @mysql_fetch_assoc($result)) {
+  while ($row = @mysqli_fetch_assoc($result)) {
     $geocode_pending = true;
 
     while ($geocode_pending) {
@@ -44,7 +44,7 @@ function geocode($table) {
           // Format: Longitude, Latitude, Altitude
           $lat = $coordinates->lat;
           $lng = $coordinates->lng;
-          $query = sprintf("UPDATE $table " .
+          $query = sprintf(sprintf('UPDATE %s ', $table) .
                 " SET lat = '%s', lng = '%s' " .
                 " WHERE id = '%s' LIMIT 1;",
                 mysql_real_escape_string($lat),
@@ -63,13 +63,14 @@ function geocode($table) {
         //echo "Address " . $address . " failed to geocoded. ";
         //echo "Received status " . $status . " \n";
       }
+      
       usleep($delay);
     }
   }
 
   // finish
   if(@$hide_geocode_output != true) {
-    echo mysql_num_rows($result)." $table geocoded<br />";
+    echo mysqli_num_rows($result).sprintf(' %s geocoded<br />', $table);
   }
 
 }

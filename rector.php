@@ -10,7 +10,9 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->sets([
         SetList::CODE_QUALITY,
         SetList::DEAD_CODE,
-        SetList::MysqlToMysqli,
+        SetList::CODING_STYLE,
+        SetList::MYSQL_TO_MYSQLI,
+        SetList::EARLY_RETURN,
         LevelSetList::UP_TO_PHP_82
     ]);
 };
