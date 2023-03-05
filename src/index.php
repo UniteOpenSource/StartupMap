@@ -178,8 +178,8 @@ include_once "header.php";
               );
           $marker_id = 0;
           foreach($types as $type) {
-            $places = mysql_query("SELECT * FROM places WHERE approved='1' AND type='$type[0]' ORDER BY title");
-            $places_total = mysql_num_rows($places);
+            $places = mysqli_query("SELECT * FROM places WHERE approved='1' AND type='$type[0]' ORDER BY title");
+            $places_total = mysqli_num_rows($places);
             while($place = mysql_fetch_assoc($places)) {
               $place[title] = htmlspecialchars_decode(addslashes(htmlspecialchars($place[title])));
               $place[description] = str_replace(array("\n", "\t", "\r"), "", htmlspecialchars_decode(addslashes(htmlspecialchars($place[description]))));
@@ -195,8 +195,8 @@ include_once "header.php";
           }
           if($show_events == true) {
             $place[type] = "event";
-            $events = mysql_query("SELECT * FROM events WHERE start_date > ".time()." AND start_date < ".(time()+9676800)." ORDER BY id DESC");
-            $events_total = mysql_num_rows($events);
+            $events = mysqli_query("SELECT * FROM events WHERE start_date > ".time()." AND start_date < ".(time()+9676800)." ORDER BY id DESC");
+            $events_total = mysqli_num_rows($events);
             while($event = mysql_fetch_assoc($events)) {
               $event[title] = htmlspecialchars_decode(addslashes(htmlspecialchars($event[title])));
               $event[description] = htmlspecialchars_decode(addslashes(htmlspecialchars($event[description])));
@@ -436,11 +436,11 @@ include_once "header.php";
           $marker_id = 0;
           foreach($types as $type) {
             if($type[0] != "event") {
-              $markers = mysql_query("SELECT * FROM places WHERE approved='1' AND type='$type[0]' ORDER BY title");
+              $markers = mysqli_query("SELECT * FROM places WHERE approved='1' AND type='$type[0]' ORDER BY title");
             } else {
-              $markers = mysql_query("SELECT * FROM events WHERE start_date > ".time()." AND start_date < ".(time()+4838400)." ORDER BY id DESC");
+              $markers = mysqli_query("SELECT * FROM events WHERE start_date > ".time()." AND start_date < ".(time()+4838400)." ORDER BY id DESC");
             }
-            $markers_total = mysql_num_rows($markers);
+            $markers_total = mysqli_num_rows($markers);
             echo "
               <li class='category'>
                 <div class='category_item'>

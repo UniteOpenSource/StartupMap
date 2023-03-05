@@ -6,7 +6,7 @@
   $_escape = static fn($str) => preg_replace("!([\b\t\n\r\f\"\\'])!", "\\\\\\1", (string) $str);
 
   $marker_id = 0;
-  $places = mysql_query("SELECT * FROM places WHERE approved='1' ORDER BY title");
+  $places = mysqli_query("SELECT * FROM places WHERE approved='1' ORDER BY title");
   $places_total = mysqli_num_rows($places);
   
   echo '{ "type": "FeatureCollection", "features": [';

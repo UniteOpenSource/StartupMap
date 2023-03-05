@@ -20,7 +20,7 @@ function geocode($table) {
   global $hide_geocode_output;
 
   // get places that don't have latlong values
-  ($result = mysql_query(sprintf('SELECT * FROM %s WHERE lat=0 OR lng=0', $table))) || die(mysql_error());
+  ($result = mysqli_query(sprintf('SELECT * FROM %s WHERE lat=0 OR lng=0', $table))) || die(mysql_error());
 
   // geocode and save them back to the db
   $delay = 0;
@@ -50,7 +50,7 @@ function geocode($table) {
                 mysql_real_escape_string($lat),
                 mysql_real_escape_string($lng),
                 mysql_real_escape_string($id));
-          $update_result = mysql_query($query);
+          $update_result = mysqli_query($query);
           if (!$update_result) {
             die("Invalid query: " . mysql_error());
           }

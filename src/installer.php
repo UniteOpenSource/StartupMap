@@ -52,11 +52,10 @@ if(isset($_POST['installer_submitted'])) {
 
 	// if config file is created, lets connect to the database and install our tables
 	if(!$error) {
-		mysqli_connect($_POST['db_hostname'], $_POST['db_username'], $_POST['db_password']) or die(mysql_error());
-		mysql_select_db($_POST['db_name']) or die(mysql_error());
+		mysqli_connect($_POST['db_hostname'], $_POST['db_username'], $_POST['db_password'], $_POST['db_name']) or die(mysql_error());
 
-		if(!mysql_num_rows( mysql_query("SHOW TABLES LIKE 'events'"))) {
-			if(!mysql_query("CREATE TABLE IF NOT EXISTS `events` (
+		if(!mysqli_num_rows( mysqli_query("SHOW TABLES LIKE 'events'"))) {
+			if(!mysqli_query("CREATE TABLE IF NOT EXISTS `events` (
 			  `id` int(9) NOT NULL AUTO_INCREMENT,
 			  `id_eventbrite` varchar(15) NOT NULL,
 			  `title` varchar(200) NOT NULL,
@@ -74,8 +73,8 @@ if(isset($_POST['installer_submitted'])) {
 			}
 		}
 
-		if(!mysql_num_rows( mysql_query("SHOW TABLES LIKE 'places'"))) {
-			if(!mysql_query("CREATE TABLE IF NOT EXISTS `places` (
+		if(!mysqli_num_rows( mysqli_query("SHOW TABLES LIKE 'places'"))) {
+			if(!mysqli_query("CREATE TABLE IF NOT EXISTS `places` (
 			  `id` int(9) NOT NULL AUTO_INCREMENT,
 			  `approved` int(1) DEFAULT NULL,
 			  `title` varchar(100) NOT NULL,
@@ -96,14 +95,14 @@ if(isset($_POST['installer_submitted'])) {
 			}
 		}
 
-		if(!mysql_num_rows( mysql_query("SHOW TABLES LIKE 'settings'"))) {
-			if(!mysql_query("CREATE TABLE IF NOT EXISTS `settings` (
+		if(!mysqli_num_rows( mysqli_query("SHOW TABLES LIKE 'settings'"))) {
+			if(!mysqli_query("CREATE TABLE IF NOT EXISTS `settings` (
 			  `sg_lastupdate` int(14) NOT NULL
 			) ENGINE=MyISAM DEFAULT CHARSET=latin1;")) {
 				die(mysql_error());
 			}
 
-			if(!mysql_query("INSERT INTO `settings` (`sg_lastupdate`) VALUES (0)")) {
+			if(!mysqli_query("INSERT INTO `settings` (`sg_lastupdate`) VALUES (0)")) {
 				die(mysql_error());
 			}
 		}

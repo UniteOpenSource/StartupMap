@@ -37,7 +37,7 @@ if ($sg_enabled) {
 else {
 
   // insert into db, wait for approval
-  ($insert = mysql_query(sprintf("INSERT INTO places (approved, title, type, address, uri, description, owner_name, owner_email) VALUES (null, '%s', '%s', '%s', '%s', '%s', '%s', '%s')", $title, $type, $address, $uri, $description, $owner_name, $owner_email))) || die(mysql_error());
+  ($insert = mysqli_query(sprintf("INSERT INTO places (approved, title, type, address, uri, description, owner_name, owner_email) VALUES (null, '%s', '%s', '%s', '%s', '%s', '%s', '%s')", $title, $type, $address, $uri, $description, $owner_name, $owner_email))) || die(mysql_error());
 
   // geocode new submission
   $hide_geocode_output = true;

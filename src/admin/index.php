@@ -6,7 +6,7 @@ include __DIR__ . "/header.php";
 // hide marker on map
 if($task == "hide") {
   $place_id = htmlspecialchars((string) $_GET['place_id']);
-  mysql_query(sprintf("UPDATE places SET approved=0 WHERE id='%s'", $place_id)) || die(mysql_error());
+  mysqli_query(sprintf("UPDATE places SET approved=0 WHERE id='%s'", $place_id)) || die(mysql_error());
   header(sprintf('Location: index.php?view=%s&search=%s&p=%s', $view, $search, $p));
   exit;
 }
@@ -14,7 +14,7 @@ if($task == "hide") {
 // show marker on map
 if($task == "approve") {
   $place_id = htmlspecialchars((string) $_GET['place_id']);
-  mysql_query(sprintf("UPDATE places SET approved=1 WHERE id='%s'", $place_id)) || die(mysql_error());
+  mysqli_query(sprintf("UPDATE places SET approved=1 WHERE id='%s'", $place_id)) || die(mysql_error());
   header(sprintf('Location: index.php?view=%s&search=%s&p=%s', $view, $search, $p));
   exit;
 }
@@ -22,7 +22,7 @@ if($task == "approve") {
 // completely delete marker from map
 if($task == "delete") {
   $place_id = htmlspecialchars((string) $_GET['place_id']);
-  mysql_query(sprintf("DELETE FROM places WHERE id='%s'", $place_id)) || die(mysql_error());
+  mysqli_query(sprintf("DELETE FROM places WHERE id='%s'", $place_id)) || die(mysql_error());
   header(sprintf('Location: index.php?view=%s&search=%s&p=%s', $view, $search, $p));
   exit;
 }
@@ -34,22 +34,22 @@ $page_end = $page_start + $items_per_page;
 
 // get results
 if ($view == "approved") {
-    $places = mysql_query(sprintf("SELECT * FROM places WHERE approved='1' ORDER BY title LIMIT %s, %d", $page_start, $items_per_page));
+    $places = mysqli_query(sprintf("SELECT * FROM places WHERE approved='1' ORDER BY title LIMIT %s, %d", $page_start, $items_per_page));
     $total = $total_approved;
 } elseif ($view == "rejected") {
-    $places = mysql_query(sprintf("SELECT * FROM places WHERE approved='0' ORDER BY title LIMIT %s, %d", $page_start, $items_per_page));
+    $places = mysqli_query(sprintf("SELECT * FROM places WHERE approved='0' ORDER BY title LIMIT %s, %d", $page_start, $items_per_page));
     $total = $total_rejected;
 } elseif ($view == "pending") {
-    $places = mysql_query(sprintf('SELECT * FROM places WHERE approved IS null ORDER BY id DESC LIMIT %s, %d', $page_start, $items_per_page));
+    $places = mysqli_query(sprintf('SELECT * FROM places WHERE approved IS null ORDER BY id DESC LIMIT %s, %d', $page_start, $items_per_page));
     $total = $total_pending;
 } elseif ($view == "") {
-    $places = mysql_query(sprintf('SELECT * FROM places ORDER BY title LIMIT %s, %d', $page_start, $items_per_page));
+    $places = mysqli_query(sprintf('SELECT * FROM places ORDER BY title LIMIT %s, %d', $page_start, $items_per_page));
     $total = $total_all;
 }
 
 if($search != "") {
-  $places = mysql_query(sprintf("SELECT * FROM places WHERE title LIKE '%%%s%%' ORDER BY title LIMIT %s, %d", $search, $page_start, $items_per_page));
-  $total = mysqli_num_rows(mysql_query(sprintf("SELECT id FROM places WHERE title LIKE '%%%s%%'", $search))); 
+  $places = mysqli_query(sprintf("SELECT * FROM places WHERE title LIKE '%%%s%%' ORDER BY title LIMIT %s, %d", $search, $page_start, $items_per_page));
+  $total = mysqli_num_rows(mysqli_query(sprintf("SELECT id FROM places WHERE title LIKE '%%%s%%'", $search))); 
 }
 
 echo $admin_head;

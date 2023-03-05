@@ -39,10 +39,10 @@ mysqli_connect($db_host, $db_user, $db_pass) || die(mysql_error());
 mysqli_select_db($db_name) || die(mysql_error());
 
 // get marker totals
-$total_approved = mysqli_num_rows(mysql_query("SELECT id FROM places WHERE approved='1'"));
-$total_rejected = mysqli_num_rows(mysql_query("SELECT id FROM places WHERE approved='0'"));
-$total_pending = mysqli_num_rows(mysql_query("SELECT id FROM places WHERE approved IS null"));
-$total_all = mysqli_num_rows(mysql_query("SELECT id FROM places"));
+$total_approved = mysqli_num_rows(mysqli_query("SELECT id FROM places WHERE approved='1'"));
+$total_rejected = mysqli_num_rows(mysqli_query("SELECT id FROM places WHERE approved='0'"));
+$total_pending = mysqli_num_rows(mysqli_query("SELECT id FROM places WHERE approved IS null"));
+$total_all = mysqli_num_rows(mysqli_query("SELECT id FROM places"));
 
 // admin header
 $admin_head = "

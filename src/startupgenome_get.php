@@ -9,7 +9,7 @@ include_once __DIR__ . "/header.php";
 // This script will only run if we haven't checked for new only
 // if the frequency interval specified in db.php has already passed.
 
-$interval_query = mysql_query("SELECT sg_lastupdate FROM settings LIMIT 1");
+$interval_query = mysqli_query("SELECT sg_lastupdate FROM settings LIMIT 1");
 if(mysqli_num_rows($interval_query) == 1) {
   $interval_info = mysqli_fetch_assoc($interval_query);
   if((time()-$interval_info[\SG_LASTUPDATE]) > $sg_frequency || $_GET['override'] == "true") {
@@ -67,11 +67,11 @@ if(mysqli_num_rows($interval_query) == 1) {
         ++$count[$place[\TYPE]];
         ++$marker_id;
 
-        ($place_query = mysql_query("SELECT id FROM places WHERE sg_organization_id='".$place['organization_id']."' LIMIT 1")) || die(mysql_error());
+        ($place_query = mysqli_query("SELECT id FROM places WHERE sg_organization_id='".$place['organization_id']."' LIMIT 1")) || die(mysql_error());
 
         // organization doesn't exist, add it to the db
         if (mysqli_num_rows($place_query) == 0) {
-            mysql_query("INSERT INTO places (approved,
+            mysqli_query("INSERT INTO places (approved,
                                           title,
                                           type,
                                           lat,
@@ -95,7 +95,7 @@ if(mysqli_num_rows($interval_query) == 1) {
         } elseif (mysqli_num_rows($place_query) == 1) {
             $place_info = mysqli_fetch_assoc($place_query);
             if($place_info['title'] != $place['name'] || $place_info['type'] != $place['type'] || $place_info['lat'] != $place['latitude'] || $place_info['lng'] != $place['longitude'] || $place_info['address'] != $place['address'] || $place_info['uri'] != $place['url'] || $place_info['description'] != $place['description']) {
-              mysql_query("UPDATE places SET title='".parseInput($place['name'])."',
+              mysqli_query("UPDATE places SET title='".parseInput($place['name'])."',
                                            type='".parseInput($place['type'])."',
                                            lat='".parseInput($place['latitude'])."',
                                            lng='".parseInput($place['longitude'])."',
@@ -109,10 +109,10 @@ if(mysqli_num_rows($interval_query) == 1) {
 
       // delete any old markers that have already been deleted on SG
       $org_array = implode(",", $org_array);
-      ($deleted = mysql_query(sprintf('DELETE FROM places WHERE sg_organization_id NOT IN (%s)', $org_array))) || die(mysql_error());
+      ($deleted = mysqli_query(sprintf('DELETE FROM places WHERE sg_organization_id NOT IN (%s)', $org_array))) || die(mysql_error());
 
       // update settings table with the timestamp for this sync
-      mysql_query("UPDATE settings SET sg_lastupdate='".time()."'");
+      mysqli_query("UPDATE settings SET sg_lastupdate='".time()."'");
 
     // show errors if there were any issues
     } catch (Exception $exception) {

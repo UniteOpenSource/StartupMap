@@ -25,7 +25,7 @@ function getEventbriteEvents($eb_keywords, $eb_city, $eb_proximity) {
   foreach($xml->event as $event) {  
 
     // add event if it doesn't already exist
-    ($event_query = mysql_query(sprintf('SELECT * FROM events WHERE id_eventbrite=%s', $event->id))) || die(mysql_error());
+    ($event_query = mysqli_query(sprintf('SELECT * FROM events WHERE id_eventbrite=%s', $event->id))) || die(mysql_error());
     if(mysqli_num_rows($event_query) == 0) {
       echo $event_id." ";
 
@@ -45,7 +45,7 @@ function getEventbriteEvents($eb_keywords, $eb_city, $eb_proximity) {
       $event_title = str_replace(["\r\n", "\r", "\n"], ' ', $event->title);  
 
       // add event to database
-      mysql_query("INSERT INTO events (id_eventbrite, 
+      mysqli_query("INSERT INTO events (id_eventbrite, 
                                       title,
                                       created, 
                                       organizer_name, 
