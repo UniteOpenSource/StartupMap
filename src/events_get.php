@@ -1,5 +1,5 @@
 <?php
-include_once "header.php";
+include_once __DIR__ . "/header.php";
 
 
 
@@ -9,7 +9,7 @@ if($eb_app_key != "") {
 }
 
 // geocode eany new markers
-include "geocode.php";
+include __DIR__ . "/geocode.php";
 
 
 // get events from eventbrite.com
@@ -25,7 +25,7 @@ function getEventbriteEvents($eb_keywords, $eb_city, $eb_proximity) {
   foreach($xml->event as $event) {  
 
     // add event if it doesn't already exist
-    $event_query = mysql_query("SELECT * FROM events WHERE id_eventbrite=$event->id") or die(mysql_error());
+    ($event_query = mysql_query("SELECT * FROM events WHERE id_eventbrite=$event->id")) || die(mysql_error());
     if(mysql_num_rows($event_query) == 0) {
       echo $event_id." ";
 
@@ -40,7 +40,7 @@ function getEventbriteEvents($eb_keywords, $eb_city, $eb_proximity) {
         $event_venue_postal_code = $venue->postal_code;
       }
       // get event title
-      $event_title = str_replace(array("\r\n", "\r", "\n"), ' ', $event->title);  
+      $event_title = str_replace(["\r\n", "\r", "\n"], ' ', $event->title);  
 
       // add event to database
       mysql_query("INSERT INTO events (id_eventbrite, 
@@ -55,12 +55,12 @@ function getEventbriteEvents($eb_keywords, $eb_city, $eb_proximity) {
                                       '$event->id',
                                       '".parseInput($event_title)."',
                                       '".strtotime($event->created)."',
-                                      '".trim(parseInput($event->organizer->name))."',
+                                      '".trim((string) parseInput($event->organizer->name))."',
                                       '$event_organizer_url',
                                       '".strtotime($event->start_date)."',
                                       '".strtotime($event->end_date)."',
                                       '$event_venue_address, $event_venue_city, $event_venue_postal_code'
-                                      )") or die(mysql_error()); 
+                                      )") || die(mysql_error()); 
     }
 
     $count++;

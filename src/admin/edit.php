@@ -1,11 +1,11 @@
 <?php
-include "header.php";
+include __DIR__ . "/header.php";
 
 
-if(isset($_GET['place_id'])) {
-  $place_id = htmlspecialchars($_GET['place_id']); 
-} else if(isset($_POST['place_id'])) {
-  $place_id = htmlspecialchars($_POST['place_id']);
+if (isset($_GET['place_id'])) {
+    $place_id = htmlspecialchars((string) $_GET['place_id']);
+} elseif (isset($_POST['place_id'])) {
+    $place_id = htmlspecialchars((string) $_POST['place_id']);
 } else {
   exit; 
 }
@@ -19,17 +19,17 @@ $place = mysql_fetch_assoc($place_query);
 
 // do place edit if requested
 if($task == "doedit") {
-  $title = str_replace( "'", "\\'", str_replace( "\\", "\\\\", $_POST['title'] ) );
+  $title = str_replace( "'", "\\'", str_replace( "\\", "\\\\", (string) $_POST['title'] ) );
   $type = $_POST['type'];
-  $address = str_replace( "'", "\\'", str_replace( "\\", "\\\\", $_POST['address'] ) );
+  $address = str_replace( "'", "\\'", str_replace( "\\", "\\\\", (string) $_POST['address'] ) );
   $uri = $_POST['uri'];
-  $description = str_replace( "'", "\\'", str_replace( "\\", "\\\\", $_POST['description'] ) );
-  $owner_name = str_replace( "'", "\\'", str_replace( "\\", "\\\\", $_POST['owner_name'] ) );
+  $description = str_replace( "'", "\\'", str_replace( "\\", "\\\\", (string) $_POST['description'] ) );
+  $owner_name = str_replace( "'", "\\'", str_replace( "\\", "\\\\", (string) $_POST['owner_name'] ) );
   $owner_email = $_POST['owner_email'];
   $lat = (float) $_POST['lat'];
   $lng = (float) $_POST['lng'];
   
-  mysql_query("UPDATE places SET title='$title', type='$type', address='$address', uri='$uri', lat='$lat', lng='$lng', description='$description', owner_name='$owner_name', owner_email='$owner_email' WHERE id='$place_id' LIMIT 1") or die(mysql_error());
+  mysql_query("UPDATE places SET title='$title', type='$type', address='$address', uri='$uri', lat='$lat', lng='$lng', description='$description', owner_name='$owner_name', owner_email='$owner_email' WHERE id='$place_id' LIMIT 1") || die(mysql_error());
   
   // geocode
   //$hide_geocode_output = true;
@@ -53,7 +53,7 @@ if($task == "doedit") {
     <div class="control-group">
       <label class="control-label" for="">Title</label>
       <div class="controls">
-        <input type="text" class="input input-xlarge" name="title" value="<?=$place[title]?>" id="">
+        <input type="text" class="input input-xlarge" name="title" value="<?=$place[\TITLE]?>" id="">
       </div>
     </div>
     <div class="control-group">
@@ -73,50 +73,50 @@ if($task == "doedit") {
     <div class="control-group">
       <label class="control-label" for="">Address</label>
       <div class="controls">
-        <input type="text" class="input input-xlarge" name="address" value="<?=$place[address]?>" id="">
+        <input type="text" class="input input-xlarge" name="address" value="<?=$place[\ADDRESS]?>" id="">
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="">URL</label>
       <div class="controls">
-        <input type="text" class="input input-xlarge" name="uri" value="<?=$place[uri]?>" id="">
+        <input type="text" class="input input-xlarge" name="uri" value="<?=$place[\URI]?>" id="">
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="">Description</label>
       <div class="controls">
-        <textarea class="input input-xlarge" name="description"><?=$place[description]?></textarea>
+        <textarea class="input input-xlarge" name="description"><?=$place[\DESCRIPTION]?></textarea>
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="">Submitter Name</label>
       <div class="controls">
-        <input type="text" class="input input-xlarge" name="owner_name" value="<?=$place[owner_name]?>" id="">
+        <input type="text" class="input input-xlarge" name="owner_name" value="<?=$place[\OWNER_NAME]?>" id="">
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="">Submitter Email</label>
       <div class="controls">
-        <input type="text" class="input input-xlarge" name="owner_email" value="<?=$place[owner_email]?>" id="">
+        <input type="text" class="input input-xlarge" name="owner_email" value="<?=$place[\OWNER_EMAIL]?>" id="">
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="">Location</label>
       <div class="controls">
-        <input type="hidden" name="lat" id="mylat" value="<?=$place[lat]?>"/>
-        <input type="hidden" name="lng" id="mylng" value="<?=$place[lng]?>"/>
+        <input type="hidden" name="lat" id="mylat" value="<?=$place[\LAT]?>"/>
+        <input type="hidden" name="lng" id="mylng" value="<?=$place[\LNG]?>"/>
         <div id="map" style="width:80%;height:300px;">
         </div>
         <script type="text/javascript">
           var map = new google.maps.Map( document.getElementById('map'), {
             zoom: 17,
-            center: new google.maps.LatLng( <?=$place[lat]?>, <?=$place[lng]?> ),
+            center: new google.maps.LatLng( <?=$place[\LAT]?>, <?=$place[\LNG]?> ),
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             streetViewControl: false,
             mapTypeControl: false
           });
           var marker = new google.maps.Marker({
-            position: new google.maps.LatLng( <?=$place[lat]?>, <?=$place[lng]?> ),
+            position: new google.maps.LatLng( <?=$place[\LAT]?>, <?=$place[\LNG]?> ),
             map: map,
             draggable: true
           });
@@ -130,7 +130,7 @@ if($task == "doedit") {
     <div class="form-actions">
       <button type="submit" class="btn btn-primary">Save Changes</button>
       <input type="hidden" name="task" value="doedit" />
-      <input type="hidden" name="place_id" value="<?=$place[id]?>" />
+      <input type="hidden" name="place_id" value="<?=$place[\ID]?>" />
       <input type="hidden" name="view" value="<?=$view?>" />
       <input type="hidden" name="search" value="<?=$search?>" />
       <input type="hidden" name="p" value="<?=$p?>" />

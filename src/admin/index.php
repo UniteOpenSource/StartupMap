@@ -1,28 +1,28 @@
 <?php
 $page = "index";
-include "header.php";
+include __DIR__ . "/header.php";
 
 
 // hide marker on map
 if($task == "hide") {
-  $place_id = htmlspecialchars($_GET['place_id']);
-  mysql_query("UPDATE places SET approved=0 WHERE id='$place_id'") or die(mysql_error());
+  $place_id = htmlspecialchars((string) $_GET['place_id']);
+  mysql_query("UPDATE places SET approved=0 WHERE id='$place_id'") || die(mysql_error());
   header("Location: index.php?view=$view&search=$search&p=$p");
   exit;
 }
 
 // show marker on map
 if($task == "approve") {
-  $place_id = htmlspecialchars($_GET['place_id']);
-  mysql_query("UPDATE places SET approved=1 WHERE id='$place_id'") or die(mysql_error());
+  $place_id = htmlspecialchars((string) $_GET['place_id']);
+  mysql_query("UPDATE places SET approved=1 WHERE id='$place_id'") || die(mysql_error());
   header("Location: index.php?view=$view&search=$search&p=$p");
   exit;
 }
 
 // completely delete marker from map
 if($task == "delete") {
-  $place_id = htmlspecialchars($_GET['place_id']);
-  mysql_query("DELETE FROM places WHERE id='$place_id'") or die(mysql_error());
+  $place_id = htmlspecialchars((string) $_GET['place_id']);
+  mysql_query("DELETE FROM places WHERE id='$place_id'") || die(mysql_error());
   header("Location: index.php?view=$view&search=$search&p=$p");
   exit;
 }
@@ -33,18 +33,18 @@ $page_start = ($p-1) * $items_per_page;
 $page_end = $page_start + $items_per_page;
 
 // get results
-if($view == "approved") {
-  $places = mysql_query("SELECT * FROM places WHERE approved='1' ORDER BY title LIMIT $page_start, $items_per_page");
-  $total = $total_approved;
-} else if($view == "rejected") {
-  $places = mysql_query("SELECT * FROM places WHERE approved='0' ORDER BY title LIMIT $page_start, $items_per_page");
-  $total = $total_rejected;
-} else if($view == "pending") {
-  $places = mysql_query("SELECT * FROM places WHERE approved IS null ORDER BY id DESC LIMIT $page_start, $items_per_page");
-  $total = $total_pending;
-} else if($view == "") {
-  $places = mysql_query("SELECT * FROM places ORDER BY title LIMIT $page_start, $items_per_page");
-  $total = $total_all;
+if ($view == "approved") {
+    $places = mysql_query("SELECT * FROM places WHERE approved='1' ORDER BY title LIMIT $page_start, $items_per_page");
+    $total = $total_approved;
+} elseif ($view == "rejected") {
+    $places = mysql_query("SELECT * FROM places WHERE approved='0' ORDER BY title LIMIT $page_start, $items_per_page");
+    $total = $total_rejected;
+} elseif ($view == "pending") {
+    $places = mysql_query("SELECT * FROM places WHERE approved IS null ORDER BY id DESC LIMIT $page_start, $items_per_page");
+    $total = $total_pending;
+} elseif ($view == "") {
+    $places = mysql_query("SELECT * FROM places ORDER BY title LIMIT $page_start, $items_per_page");
+    $total = $total_all;
 }
 if($search != "") {
   $places = mysql_query("SELECT * FROM places WHERE title LIKE '%$search%' ORDER BY title LIMIT $page_start, $items_per_page");

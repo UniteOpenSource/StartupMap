@@ -155,16 +155,16 @@ if(isset($_POST['installer_submitted'])) {
 						<div class="control-group"><h4>Database Settings</h4></div>
 						<p>This installer requires that you have a database setup on your server and can provide the following information:</p>
 						<div class="control-group">
-							<input type="text" name="db_hostname" class="input-large" value="<?= (isset($_POST['db_hostname'])?$_POST['db_hostname']:''); ?>" placeholder="Hostname (e.g. localhost)" />
+							<input type="text" name="db_hostname" class="input-large" value="<?= ($_POST['db_hostname'] ?? ''); ?>" placeholder="Hostname (e.g. localhost)" />
 						</div>
 						<div class="control-group">
-							<input type="text" name="db_name" class="input-large" value="<?= (isset($_POST['db_name'])?$_POST['db_name']:''); ?>" placeholder="Database Name" />
+							<input type="text" name="db_name" class="input-large" value="<?= ($_POST['db_name'] ?? ''); ?>" placeholder="Database Name" />
 						</div>
 						<div class="control-group">
-							<input type="text" name="db_username" class="input-large" value="<?= (isset($_POST['db_username'])?$_POST['db_username']:''); ?>" placeholder="Username" />
+							<input type="text" name="db_username" class="input-large" value="<?= ($_POST['db_username'] ?? ''); ?>" placeholder="Username" />
 						</div>
 						<div class="control-group">
-							<input type="password" name="db_password" class="input-large" value="<?= (isset($_POST['db_password'])?$_POST['db_password']:''); ?>" placeholder="Password" />
+							<input type="password" name="db_password" class="input-large" value="<?= ($_POST['db_password'] ?? ''); ?>" placeholder="Password" />
 						</div>
 
 						<hr />
@@ -172,10 +172,10 @@ if(isset($_POST['installer_submitted'])) {
 						<div class="control-group"><h4>Administrative Settings</h4></div>
 						<p>The following is the admin username and password you will use to access the adminstrative control panel of this system:</p>
 						<div class="control-group">
-							<input type="text" name="admin_username" class="input-large" value="<?= (isset($_POST['admin_username'])?$_POST['admin_username']:''); ?>" placeholder="Admin Username" />
+							<input type="text" name="admin_username" class="input-large" value="<?= ($_POST['admin_username'] ?? ''); ?>" placeholder="Admin Username" />
 						</div>
 						<div class="control-group">
-							<input type="password" name="admin_pass" class="input-large" value="<?= (isset($_POST['admin_pass'])?$_POST['admin_pass']:''); ?>" placeholder="Admin Password" />
+							<input type="password" name="admin_pass" class="input-large" value="<?= ($_POST['admin_pass'] ?? ''); ?>" placeholder="Admin Password" />
 						</div>
 
 						<hr />

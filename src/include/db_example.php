@@ -72,7 +72,7 @@ $show_events = true;
     // search eventbrite for these keywords
     // use "+" for spaces
     // e.g. 'startup', 'startups', 'demo+day'
-    $eb_keywords = join("%20OR%20", array('startup', 'startups'));
+    $eb_keywords = implode("%20OR%20", ['startup', 'startups']);
 
     // specify city to search in and around
     // example: Santa+Monica
@@ -98,10 +98,7 @@ $lat_lng = "34.034453,-118.341293";
 $domain = "http://www.represent.la";
 
 // Twitter username and default share text
-$twitter = array(
-  "share_text" => "Let's put Los Angeles startups on the map:",
-  "username" => "representla"
-);
+$twitter = ["share_text" => "Let's put Los Angeles startups on the map:", "username" => "representla"];
 
 // Short blurb about this site (visible to visitors)
 $blurb = "This map was made to connect and promote the Los Angeles tech startup community.  Let's put LA on the map!";

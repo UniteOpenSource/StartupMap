@@ -1,5 +1,5 @@
 <?php
-include_once "header.php";
+include_once __DIR__ . "/header.php";
 
 // This script syncs your database with Startup Genome.
 // It checks to see if your local database is missing any
@@ -12,21 +12,21 @@ include_once "header.php";
 $interval_query = mysql_query("SELECT sg_lastupdate FROM settings LIMIT 1");
 if(mysql_num_rows($interval_query) == 1) {
   $interval_info = mysql_fetch_assoc($interval_query);
-  if((time()-$interval_info[sg_lastupdate]) > $sg_frequency || $_GET['override'] == "true") {
+  if((time()-$interval_info[\SG_LASTUPDATE]) > $sg_frequency || $_GET['override'] == "true") {
 
     // connect to startup genome API
-    if(strpos($_SERVER['SERVER_NAME'],'.local') !== false) {
-      $config = array('api_url' => 'startupgenome.com.local/api/');
+    if(str_contains((string) $_SERVER['SERVER_NAME'],'.local')) {
+      $config = ['api_url' => 'startupgenome.com.local/api/'];
     } else {
-      $config = array('api_url' => 'startupgenome.co/api');
+      $config = ['api_url' => 'startupgenome.co/api'];
     }
     $config['search_location'] = $sg_location;
     $http = Http::connect($config['api_url'],false,'http');
 
     try {
       $r = $http->doGet("login/{$sg_auth_code}");
-      $j = json_decode($r,1);
-      $http->setHeaders(array("AUTH-CODE: {$sg_auth_code}"));
+      $j = json_decode($r,1, 512, JSON_THROW_ON_ERROR);
+      $http->setHeaders(["AUTH-CODE: {$sg_auth_code}"]);
       $user = $j['response'];
 
     } catch(Exception $e) {
@@ -37,39 +37,39 @@ if(mysql_num_rows($interval_query) == 1) {
     // get organizations
     try {
       $r = $http->doGet("/organizations{$config['search_location']}");
-      $places_arr = json_decode($r, 1);
+      $places_arr = json_decode($r, 1, 512, JSON_THROW_ON_ERROR);
 
       // update organizations in local db
-      $org_array = Array();
-      foreach ($places_arr['response'] as $key => $place) {
+      $org_array = [];
+      foreach ($places_arr['response'] as $place) {
         if (!$place['categories'][0]['parent_category_id'])
           $place['categories'][0]['parent_category_id'] = $place['categories'][0]['category_id'];
         switch ($place['categories'][0]['parent_category_id']) {
           default:
-          case '2': $place[type] = 'startup'; break;
-          case '3': $place[type] = 'investor'; break;
-          case '4': $place[type] = 'accelerator'; break;
-          case '5': $place[type] = 'incubator'; break;
-          case '6': $place[type] = 'coworking'; break;
+          case '2': $place[\TYPE] = 'startup'; break;
+          case '3': $place[\TYPE] = 'investor'; break;
+          case '4': $place[\TYPE] = 'accelerator'; break;
+          case '5': $place[\TYPE] = 'incubator'; break;
+          case '6': $place[\TYPE] = 'coworking'; break;
         }
 
         // format the address for display
-        $place[address] = $place['address1'];
-        $place[address] .= ($place['address2']?($place[address]?', ':'').$place['address2']:'');
-        $place[address] .= ($place['city']?($place[address]?', ':'').$place['city']:'');
-        $place[address] .= ($place['state']?($place[address]?', ':'').(isset($states_arr[$place['state']])?$states_arr[$place['state']]:$place['state']):'');
-        $place[address] .= ($place['zip']?($place[address]?', ':'').$place['zip']:'');
-        $place[address] .= ($place['country']?($place[address]?', ':'').(isset($countries_arr[$place['country']])?$countries_arr[$place['country']]:$place['country']):'');
-        $types_arr[$place[type]][] = $place;
+        $place[\ADDRESS] = $place['address1'];
+        $place[\ADDRESS] .= ($place['address2']?($place[\ADDRESS]?', ':'').$place['address2']:'');
+        $place[\ADDRESS] .= ($place['city']?($place[\ADDRESS]?', ':'').$place['city']:'');
+        $place[\ADDRESS] .= ($place['state']?($place[\ADDRESS]?', ':'').($states_arr[$place['state']] ?? $place['state']):'');
+        $place[\ADDRESS] .= ($place['zip']?($place[\ADDRESS]?', ':'').$place['zip']:'');
+        $place[\ADDRESS] .= ($place['country']?($place[\ADDRESS]?', ':'').($countries_arr[$place['country']] ?? $place['country']):'');
+        $types_arr[$place[\TYPE]][] = $place;
         $org_array[] = $place['organization_id'];
-        $count[$place[type]]++;
+        $count[$place[\TYPE]]++;
         $marker_id++;
 
-        $place_query = mysql_query("SELECT id FROM places WHERE sg_organization_id='".$place['organization_id']."' LIMIT 1") or die(mysql_error());
+        ($place_query = mysql_query("SELECT id FROM places WHERE sg_organization_id='".$place['organization_id']."' LIMIT 1")) || die(mysql_error());
 
         // organization doesn't exist, add it to the db
-        if(mysql_num_rows($place_query) == 0) {
-          mysql_query("INSERT INTO places (approved,
+        if (mysql_num_rows($place_query) == 0) {
+            mysql_query("INSERT INTO places (approved,
                                           title,
                                           type,
                                           lat,
@@ -88,13 +88,12 @@ if(mysql_num_rows($interval_query) == 1) {
                                           '".parseInput($place['url'])."',
                                           '".parseInput($place['description'])."',
                                           '".parseInput($place['organization_id'])."'
-                                          )") or die(mysql_error());
-
-        // organization already exists, update it with new info if necessary
-        } else if(mysql_num_rows($place_query) == 1) {
-          $place_info = mysql_fetch_assoc($place_query);
-          if($place_info['title'] != $place['name'] || $place_info['type'] != $place['type'] || $place_info['lat'] != $place['latitude'] || $place_info['lng'] != $place['longitude'] || $place_info['address'] != $place['address'] || $place_info['uri'] != $place['url'] || $place_info['description'] != $place['description']) {
-            mysql_query("UPDATE places SET title='".parseInput($place['name'])."',
+                                          )") || die(mysql_error());
+            // organization already exists, update it with new info if necessary
+        } elseif (mysql_num_rows($place_query) == 1) {
+            $place_info = mysql_fetch_assoc($place_query);
+            if($place_info['title'] != $place['name'] || $place_info['type'] != $place['type'] || $place_info['lat'] != $place['latitude'] || $place_info['lng'] != $place['longitude'] || $place_info['address'] != $place['address'] || $place_info['uri'] != $place['url'] || $place_info['description'] != $place['description']) {
+              mysql_query("UPDATE places SET title='".parseInput($place['name'])."',
                                            type='".parseInput($place['type'])."',
                                            lat='".parseInput($place['latitude'])."',
                                            lng='".parseInput($place['longitude'])."',
@@ -102,14 +101,13 @@ if(mysql_num_rows($interval_query) == 1) {
                                            uri='".parseInput($place['url'])."',
                                            description='".parseInput($place['description'])."'
                                            WHERE sg_organization_id='".parseInput($place['organization_id'])."' LIMIT 1");
-          }
-
+            }
         }
       }
 
       // delete any old markers that have already been deleted on SG
       $org_array = implode(",", $org_array);
-      $deleted = mysql_query("DELETE FROM places WHERE sg_organization_id NOT IN ({$org_array})") or die(mysql_error());
+      ($deleted = mysql_query("DELETE FROM places WHERE sg_organization_id NOT IN ({$org_array})")) || die(mysql_error());
 
       // update settings table with the timestamp for this sync
       mysql_query("UPDATE settings SET sg_lastupdate='".time()."'");

@@ -1,28 +1,19 @@
 <?php
 class Http_Exception extends Exception{
-	const NOT_MODIFIED = 304;
-	const BAD_REQUEST = 400;
-	const NOT_FOUND = 404;
-	const NOT_ALOWED = 405;
-	const CONFLICT = 409;
-	const PRECONDITION_FAILED = 412;
-	const INTERNAL_ERROR = 500;
+	final const NOT_MODIFIED = 304;
+	final const BAD_REQUEST = 400;
+	final const NOT_FOUND = 404;
+	final const NOT_ALOWED = 405;
+	final const CONFLICT = 409;
+	final const PRECONDITION_FAILED = 412;
+	final const INTERNAL_ERROR = 500;
 }
 
 class Http_Multiple_Error
 {
-	private $_status = null;
-	private $_type   = null;
-	private $_url    = null;
-	private $_params = null;
-
-	function __construct($status, $type, $url, $params)
-	{
-		$this->_status = $status;
-		$this->_type   = $type;
-		$this->_url    = $url;
-		$this->_params = $params;
-	}
+	function __construct(private $_status, private $_type, private $_url, private $_params)
+ {
+ }
 
 	function getStatus()
 	{
@@ -47,17 +38,11 @@ class Http_Multiple_Error
 
 class Http
 {
-	private $_host = null;
-	private $_port = null;
-	private $_user = null;
-	private $_pass = null;
-	private $_protocol = null;
-	private $_options = null;
+	private $_user;
+	private $_pass;
 
-	const HTTP  = 'http';
-	const HTTPS = 'https';
-
-	private $_connMultiple = false;
+	final const HTTP  = 'http';
+	final const HTTPS = 'https';
 	/**
 	 * Factory of the class. Lazy connect
 	 *
@@ -81,14 +66,14 @@ class Http
 		return new self(null, null, null, null, true);
 	}
 
-	private $_append = array();
+	private array $_append = [];
 	public function add($http)
 	{
 		$this->_append[] = $http;
 		return $this;
 	}
 
-	private $_silentMode = false;
+	private false $_silentMode = false;
 	/**
 	 *
 	 * @param bool $mode
@@ -100,15 +85,9 @@ class Http
 		return $this;
 	}
 
-	protected function __construct($host, $port, $protocol, $options, $connMultiple)
-	{
-		$this->_connMultiple = $connMultiple;
-
-		$this->_host     = $host;
-		$this->_port     = $port;
-		$this->_protocol = $protocol;
-		$this->_options  = $options;
-	}
+	protected function __construct(private $_host, $port, private $_protocol, private $_options, private $_connMultiple)
+ {
+ }
 
 	public function setCredentials($user, $pass)
 	{
@@ -117,21 +96,21 @@ class Http
 		return $this;
 	}
 
-	const POST   = 'POST';
-	const GET    = 'GET';
-	const DELETE = 'DELETE';
-	const PUT    = 'PUT';
+	final const POST   = 'POST';
+	final const GET    = 'GET';
+	final const DELETE = 'DELETE';
+	final const PUT    = 'PUT';
 
-	private $_requests = array();
+	private array $_requests = [];
 
 	/**
 	 * @param string $url
 	 * @param array $params
 	 * @return Http
 	 */
-	public function put($url, $params=array())
+	public function put($url, $params=[])
 	{
-		$this->_requests[] = array(self::PUT, $this->_url($url), $params);
+		$this->_requests[] = [self::PUT, $this->_url($url), $params];
 		return $this;
 	}
 
@@ -140,9 +119,9 @@ class Http
 	 * @param array $params
 	 * @return Http
 	 */
-	public function post($url, $params=array())
+	public function post($url, $params=[])
 	{
-		$this->_requests[] = array(self::POST, $this->_url($url), $params);
+		$this->_requests[] = [self::POST, $this->_url($url), $params];
 		return $this;
 	}
 
@@ -151,9 +130,9 @@ class Http
 	 * @param array $params
 	 * @return Http
 	 */
-	public function get($url, $params=array())
+	public function get($url, $params=[])
 	{
-		$this->_requests[] = array(self::GET, $this->_url($url), $params);
+		$this->_requests[] = [self::GET, $this->_url($url), $params];
 		return $this;
 	}
 
@@ -162,9 +141,9 @@ class Http
 	 * @param array $params
 	 * @return Http
 	 */
-	public function delete($url, $params=array())
+	public function delete($url, $params=[])
 	{
-		$this->_requests[] = array(self::DELETE, $this->_url($url), $params);
+		$this->_requests[] = [self::DELETE, $this->_url($url), $params];
 		return $this;
 	}
 
@@ -180,7 +159,7 @@ class Http
 	 * @param array $params
 	 * @return string
 	 */
-	public function doPut($url, $params=array())
+	public function doPut($url, $params=[])
 	{
 		return $this->_exec(self::PUT, $this->_url($url), $params);
 	}
@@ -192,7 +171,7 @@ class Http
 	 * @param array $params
 	 * @return string
 	 */
-	public function doPost($url, $params=array())
+	public function doPost($url, $params=[])
 	{
 		return $this->_exec(self::POST, $this->_url($url), $params);
 	}
@@ -204,7 +183,7 @@ class Http
 	 * @param array $params
 	 * @return string
 	 */
-	public function doGet($url, $params=array())
+	public function doGet($url, $params=[])
 	{
 		return $this->_exec(self::GET, $this->_url($url), $params);
 	}
@@ -216,12 +195,12 @@ class Http
 	 * @param array $params
 	 * @return string
 	 */
-	public function doDelete($url, $params=array())
+	public function doDelete($url, $params=[])
 	{
 		return $this->_exec(self::DELETE, $this->_url($url), $params);
 	}
 
-	private $_headers = array();
+	private array $_headers = [];
 	/**
 	 * setHeaders
 	 *
@@ -246,9 +225,9 @@ class Http
 		return "{$this->_protocol}://{$this->_host}/{$url}";
 	}
 
-	const HTTP_OK = 200;
-	const HTTP_CREATED = 201;
-	const HTTP_ACEPTED = 202;
+	final const HTTP_OK = 200;
+	final const HTTP_CREATED = 201;
+	final const HTTP_ACEPTED = 202;
 
 	/**
 	 * Performing the real request
@@ -258,9 +237,10 @@ class Http
 	 * @param array $params
 	 * @return string
 	 */
-	private function _exec($type, $url, $params = array())
+	private function _exec($type, $url, $params = [])
 	{
-		$headers = $this->_headers;
+		$out = null;
+  $headers = $this->_headers;
 		$s = curl_init();
 		if(is_array($this->_options))
 		{
@@ -281,7 +261,7 @@ class Http
 		case self::PUT:
 			curl_setopt($s, CURLOPT_URL, $url);
 			curl_setopt($s, CURLOPT_CUSTOMREQUEST, self::PUT);
-			curl_setopt($s, CURLOPT_HTTPHEADER, array('Content-Length: ' . strlen(http_build_query($params))));
+			curl_setopt($s, CURLOPT_HTTPHEADER, ['Content-Length: ' . strlen(http_build_query($params))]);
 			curl_setopt($s, CURLOPT_POSTFIELDS, http_build_query($params));
 			break;
 		case self::POST:
@@ -308,7 +288,7 @@ class Http
 			break;
 		default:
 			if (!$this->_silentMode) {
-				$_dout = json_decode($_out);
+				$_dout = json_decode($_out, null, 512, JSON_THROW_ON_ERROR);
 				if($_dout != NULL)
 				{
 					throw new Http_Exception("{$_dout->error->message}", $status);
@@ -334,7 +314,7 @@ class Http
 	{
 		$out= null;
 		if (count($this->_append) > 0) {
-			$arr = array();
+			$arr = [];
 			foreach ($this->_append as $_append) {
 				$arr = array_merge($arr, $_append->_getRequests());
 			}
@@ -348,7 +328,7 @@ class Http
 	private function _run()
 	{
 		$headers = $this->_headers;
-		$curly = $result = array();
+		$curly = $result = [];
 
 		$mh = curl_multi_init();
 		foreach ($this->_requests as $id => $reg) {

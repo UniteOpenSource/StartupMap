@@ -1,35 +1,42 @@
 <?php
-include "../include/db.php";
+include __DIR__ . "/../include/db.php";
 // get task
-if(isset($_GET['task'])) { $task = $_GET['task']; } 
-else if(isset($_POST['task'])) { $task = $_POST['task']; }
+if (isset($_GET['task'])) {
+    $task = $_GET['task'];
+} elseif (isset($_POST['task'])) {
+    $task = $_POST['task'];
+}
 
 // get view
-if(isset($_GET['view'])) { $view = $_GET['view']; } 
-else if(isset($_POST['view'])) { $view = $_POST['view']; }
-else { $view = ""; }
+if (isset($_GET['view'])) {
+    $view = $_GET['view'];
+} elseif (isset($_POST['view'])) {
+    $view = $_POST['view'];
+} else { $view = ""; }
 
 // get page
-if(isset($_GET['p'])) { $p = $_GET['p']; } 
-else if(isset($_POST['p'])) { $p = $_POST['p']; }
-else { $p = 1; }
+if (isset($_GET['p'])) {
+    $p = $_GET['p'];
+} elseif (isset($_POST['p'])) {
+    $p = $_POST['p'];
+} else { $p = 1; }
 
 // get search
-if(isset($_GET['search'])) { $search = $_GET['search']; } 
-else if(isset($_POST['search'])) { $search = $_POST['search']; }
-else { $search = ""; }
+if (isset($_GET['search'])) {
+    $search = $_GET['search'];
+} elseif (isset($_POST['search'])) {
+    $search = $_POST['search'];
+} else { $search = ""; }
 
 // make sure admin is logged in
-if($page != "login") {
-  if($_COOKIE["representmap_user"] != crypt($admin_user, $admin_user) OR $_COOKIE["representmap_pass"] != crypt($admin_pass, $admin_pass)) {
+if ($page != "login" && ($_COOKIE["representmap_user"] != crypt((string) $admin_user, (string) $admin_user) || $_COOKIE["representmap_pass"] != crypt((string) $admin_pass, (string) $admin_pass))) {
     header("Location: login.php");
     exit;
-  }
 }
 
 // connect to db
-mysql_connect($db_host, $db_user, $db_pass) or die(mysql_error());
-mysql_select_db($db_name) or die(mysql_error());
+mysql_connect($db_host, $db_user, $db_pass) || die(mysql_error());
+mysql_select_db($db_name) || die(mysql_error());
 
 // get marker totals
 $total_approved = mysql_num_rows(mysql_query("SELECT id FROM places WHERE approved='1'"));

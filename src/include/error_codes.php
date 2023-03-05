@@ -6,7 +6,7 @@ $x = 0;
 // json encoded string with an 2d array of the following codes and
 // some optional additional (depending on the code)
 
-define("ERR_UNKNOWN",				$base+($x++)); //an unknown error
+define("ERR_UNKNOWN",				$base); //an unknown error
 
 /////////////////////
 // HTTP STATUS 417
@@ -51,28 +51,26 @@ define("ERR_NOT_MANAGER",		$base+($x++)); //the action requires group manger or 
 /////////////////////
 define("ERR_AUTH_NET",			$base+($x++));
 
-$_MESSAGES = array(
-	ERR_UNKNOWN				=> 	"An unknown error occurred",
-	ERR_NO_DATA				=> 	"No data was given",
-
-	// Most 417 messages are written so that they can be appended to
-	// a field name
-	ERR_INVALID				=> 	"was not valid",
-	ERR_BLANK 				=>	"cannot be blank",
-	ERR_NOT_FOUND			=>	"was not found",
-	ERR_INVALID_EMAIL =>	"is not a valid email address",
-	ERR_INVALID_PHONE	=>	"is not a valid phone number",
-	ERR_INVALID_URL		=>	"is not a valid url",
-	ERR_INVALID_PATH	=>	"is not a valid file path",
-	ERR_INVALID_BOOL	=>	"is not a valid boolean",
-	ERR_INVALID_MAC		=>	"is not a valid mac address",
-	ERR_TOO_SHORT			=>	"is too short",
-	ERR_TOO_LONG 			=>	"is too long",
-	ERR_MISSING_REQ 	=> "is missing",
-	ERR_EXISTS				=> "already exists",
-
-	ERR_NOT_SUPER			=> "You must be a super user to do that",
-	ERR_NOT_ADMIN			=>	"You must be the organization admin to do that",
-	ERR_NOT_MANAGER		=>	"You must be the group manager to do that"
-);
+$_MESSAGES = [
+    ERR_UNKNOWN				=> 	"An unknown error occurred",
+    ERR_NO_DATA				=> 	"No data was given",
+    // Most 417 messages are written so that they can be appended to
+    // a field name
+    ERR_INVALID				=> 	"was not valid",
+    ERR_BLANK 				=>	"cannot be blank",
+    ERR_NOT_FOUND			=>	"was not found",
+    ERR_INVALID_EMAIL =>	"is not a valid email address",
+    ERR_INVALID_PHONE	=>	"is not a valid phone number",
+    ERR_INVALID_URL		=>	"is not a valid url",
+    ERR_INVALID_PATH	=>	"is not a valid file path",
+    ERR_INVALID_BOOL	=>	"is not a valid boolean",
+    ERR_INVALID_MAC		=>	"is not a valid mac address",
+    ERR_TOO_SHORT			=>	"is too short",
+    ERR_TOO_LONG 			=>	"is too long",
+    ERR_MISSING_REQ 	=> "is missing",
+    ERR_EXISTS				=> "already exists",
+    ERR_NOT_SUPER			=> "You must be a super user to do that",
+    ERR_NOT_ADMIN			=>	"You must be the organization admin to do that",
+    ERR_NOT_MANAGER		=>	"You must be the group manager to do that",
+];
 ?>
