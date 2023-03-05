@@ -12,7 +12,7 @@ if (isset($_GET['place_id'])) {
 
 
 // get place info
-$place_query = mysql_query(sprintf('SELECT * FROM places WHERE id=\'%s\' LIMIT 1', $place_id));
+$place_query = mysql_query(sprintf("SELECT * FROM places WHERE id='%s' LIMIT 1", $place_id));
 if(mysqli_num_rows($place_query) != 1) { exit; }
 
 $place = mysqli_fetch_assoc($place_query);
@@ -30,7 +30,7 @@ if($task == "doedit") {
   $lat = (float) $_POST['lat'];
   $lng = (float) $_POST['lng'];
   
-  mysql_query(sprintf('UPDATE places SET title=\'%s\', type=\'%s\', address=\'%s\', uri=\'%s\', lat=\'%s\', lng=\'%s\', description=\'%s\', owner_name=\'%s\', owner_email=\'%s\' WHERE id=\'%s\' LIMIT 1', $title, $type, $address, $uri, $lat, $lng, $description, $owner_name, $owner_email, $place_id)) || die(mysql_error());
+  mysql_query(sprintf("UPDATE places SET title='%s', type='%s', address='%s', uri='%s', lat='%s', lng='%s', description='%s', owner_name='%s', owner_email='%s' WHERE id='%s' LIMIT 1", $title, $type, $address, $uri, $lat, $lng, $description, $owner_name, $owner_email, $place_id)) || die(mysql_error());
   
   // geocode
   //$hide_geocode_output = true;

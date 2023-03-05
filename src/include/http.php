@@ -356,6 +356,7 @@ class Http
   				{
   					throw new Http_Exception(sprintf('%s', $_dout->error->message), $status);
   				}
+
       error_log(sprintf('Unknown http error: %s, %s (%s)', $_out, $err, $status));
       throw new Http_Exception($err, $status);
 		}
@@ -368,6 +369,7 @@ class Http
 		if ($this->_connMultiple) {
 			return $this->_runMultiple();
 		}
+
   return $this->_run();
 	}
 

@@ -12,7 +12,7 @@ define("ERR_UNKNOWN",				$base); //an unknown error
 // HTTP STATUS 417
 /////////////////////
 define("ERR_NO_DATA",				$base); //the server is expecting data, but none was given
-define("ERR_INVALID",				$base+($x++)); //the specified data was not valid
+define("ERR_INVALID",				$base); //the specified data was not valid
 	// {"field": name}
 define("ERR_BLANK",					$base+($x++)); //the specified data was blank 
 	// {"field": name}

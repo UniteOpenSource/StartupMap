@@ -33,7 +33,7 @@ function geocode($table) {
     while ($geocode_pending) {
       $address = $row["address"];
       $id = $row["id"];
-      $request_url = $base_url . "?address=" . urlencode((string) $address) . "&sensor=false";
+      $request_url = $base_url . "?address=" . urlencode($address) . "&sensor=false";
       ($xml = simplexml_load_file($request_url)) || die("url not loading");
       
       $status = $xml->status;
