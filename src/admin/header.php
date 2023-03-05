@@ -36,7 +36,7 @@ if ($page != "login" && ($_COOKIE["representmap_user"] != crypt((string) $admin_
 
 // connect to db
 mysqli_connect($db_host, $db_user, $db_pass) || die(mysql_error());
-mysql_select_db($db_name) || die(mysql_error());
+mysqli_select_db($db_name) || die(mysql_error());
 
 // get marker totals
 $total_approved = mysqli_num_rows(mysql_query("SELECT id FROM places WHERE approved='1'"));

@@ -14,7 +14,7 @@ define("ERR_UNKNOWN",				$base); //an unknown error
 define("ERR_NO_DATA",				$base); //the server is expecting data, but none was given
 define("ERR_INVALID",				$base); //the specified data was not valid
 	// {"field": name}
-define("ERR_BLANK",					$base+($x++)); //the specified data was blank 
+define("ERR_BLANK",					$base); //the specified data was blank 
 	// {"field": name}
 define("ERR_NOT_FOUND",			$base+($x++)); //the specified field was not found
 	// {"field": name}

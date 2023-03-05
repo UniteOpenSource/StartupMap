@@ -11,9 +11,9 @@ if(isset($_POST['installer_submitted'])) {
 
 	// if no basic validation errors, check to make sure database info actually works
 	if(!$error) {
-		if(!@mysql_connect($_POST['db_hostname'], $_POST['db_username'], $_POST['db_password'])) $error .= 'Your database host, username, or password information were not correct.<br />';
+		if(!@mysqli_connect($_POST['db_hostname'], $_POST['db_username'], $_POST['db_password'])) $error .= 'Your database host, username, or password information were not correct.<br />';
 		if(!$error) {
-			if(!@mysql_select_db($_POST['db_name'])) $error .= 'Your database name is not valid/could not be found.<br />';
+			if(!@mysqli_select_db($_POST['db_name'])) $error .= 'Your database name is not valid/could not be found.<br />';
 		}
 	}
 
@@ -52,7 +52,7 @@ if(isset($_POST['installer_submitted'])) {
 
 	// if config file is created, lets connect to the database and install our tables
 	if(!$error) {
-		mysql_connect($_POST['db_hostname'], $_POST['db_username'], $_POST['db_password']) or die(mysql_error());
+		mysqli_connect($_POST['db_hostname'], $_POST['db_username'], $_POST['db_password']) or die(mysql_error());
 		mysql_select_db($_POST['db_name']) or die(mysql_error());
 
 		if(!mysql_num_rows( mysql_query("SHOW TABLES LIKE 'events'"))) {
